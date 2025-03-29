@@ -2,6 +2,8 @@ package com.example.scheduleapp.data.mapping
 
 import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 import com.example.scheduleapp.domain.model.ScheduleEvent
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 fun ScheduleEvent.toEntity(): ScheduleEventEntity {
     return ScheduleEventEntity(
@@ -9,7 +11,7 @@ fun ScheduleEvent.toEntity(): ScheduleEventEntity {
         title = this.title,
         description = this.description,
         startTime = this.startTime,
-        notificationOffset = this.notificationOffset,
+        notificationOffset = this.notificationOffset.inWholeMilliseconds,
         color = this.color
     )
 }
@@ -20,7 +22,7 @@ fun ScheduleEventEntity.toDomain(): ScheduleEvent{
         title = this.title,
         description = this.description,
         startTime = this.startTime,
-        notificationOffset = this.notificationOffset,
+        notificationOffset = notificationOffset.milliseconds,
         color = this.color
     )
 }
