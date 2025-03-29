@@ -1,7 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -30,64 +29,78 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
+        freeCompilerArgs += "-Xjvm-default=all"
     }
     buildFeatures {
         compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
 }
 
 dependencies {
-    implementation (libs.hilt.android)
-    kapt (libs.hilt.android.compiler)
-    implementation (libs.androidx.activity.ktx)
-    implementation (libs.androidx.fragment.ktx)
-    implementation (libs.androidx.hilt.work)
-    kapt (libs.androidx.hilt.compiler)
-    implementation (libs.androidx.lifecycle.viewmodel.ktx)
-    implementation (libs.androidx.lifecycle.livedata.ktx)
+    // Core
+    implementation(libs.androidx.core.ktx)
+
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.graphics)
+    implementation(libs.androidx.compose.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
+
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.hilt.work)
-    kapt(libs.androidx.hilt.compiler)
-    implementation(libs.androidx.hilt.lifecycle.viewmodel)
-    implementation (libs.work.runtime.ktx)
-    implementation (libs.kotlinx.coroutines.android)
-    implementation (libs.material3)
-    implementation (libs.androidx.navigation.compose)
-    implementation (libs.androidx.work.runtime.ktx)
-    implementation (libs.androidx.room.ktx)
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.room.common)
 
-    testImplementation (libs.kotlin.test.junit)
-    testImplementation (libs.kotlin.test)
+    // Hilt Work
+    implementation (libs.androidx.hilt.work)
+    kapt (libs.androidx.hilt.compiler)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.androidx.room.compiler)
+
+    // WorkManager
+    implementation (libs.androidx.work.runtime.ktx)
+
+    // Kotlin
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Testing
     testImplementation(libs.junit)
-    testImplementation (libs.mockk)
-    testImplementation (libs.kotlinx.coroutines.test)
-    testImplementation (libs.androidx.core.testing)
-    testImplementation (libs.hilt.android.testing)
-    kaptTest (libs.hilt.android.compiler)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation (libs.kotlin.test)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
 }
+
+kapt {
+    correctErrorTypes = true
+}
+
