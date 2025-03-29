@@ -1,10 +1,10 @@
-package com.example.scheduleapp.data.dao
+package com.example.scheduleapp.data.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.scheduleapp.data.model.ScheduleEventEntity
+import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 

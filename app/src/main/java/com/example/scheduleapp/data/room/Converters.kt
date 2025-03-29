@@ -1,4 +1,4 @@
-package com.example.scheduleapp.data
+package com.example.scheduleapp.data.room
 
 import androidx.room.TypeConverter
 import kotlinx.datetime.Instant

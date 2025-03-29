@@ -4,6 +4,7 @@ import com.example.scheduleapp.domain.model.ScheduleEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
+
 interface ScheduleRepository{
     suspend fun addEvent(event: ScheduleEvent)
     suspend fun deleteEvent(eventId: Long)

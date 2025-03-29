@@ -1,4 +1,4 @@
-package com.example.scheduleapp.data.model
+package com.example.scheduleapp.data.room.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -13,5 +13,5 @@ data class ScheduleEventEntity(
     val description: String,
     @ColumnInfo(name = "start_time") val startTime: Instant,
     @ColumnInfo(name = "notification_offset") val notificationOffset: Duration,
-    val color: Int
+    val color: Long
 )
