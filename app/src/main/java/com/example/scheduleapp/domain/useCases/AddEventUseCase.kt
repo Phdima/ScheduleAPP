@@ -10,7 +10,7 @@ class AddEventUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(event: ScheduleEvent) {
         require(event.startTime > Clock.System.now()){
-            "Can't schedule event in the past"
+            "Event time (${event.startTime}) must be in the future. Current time: ${Clock.System.now()}"
         }
         repository.addEvent(event)
     }

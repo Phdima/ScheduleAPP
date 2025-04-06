@@ -6,10 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.useCases.AddEventUseCase
+import com.example.scheduleapp.domain.useCases.ObserveEventsUseCase
+import com.example.scheduleapp.presentation.state.EventStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -23,45 +28,21 @@ import kotlin.time.Duration.Companion.hours
 
 @HiltViewModel
 class ScheduleVM @Inject constructor(
-    private val addEventUseCase: AddEventUseCase
+    private val addEventUseCase: AddEventUseCase,
+    private val observeEventsUseCase: ObserveEventsUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CreateEventState())
-    val state: StateFlow<CreateEventState> = _state.asStateFlow()
-
-    fun updateTitle(title: String) {
-        _state.value = _state.value.copy(title = title)
-    }
-
-    fun updateDescription(description: String) {
-        _state.value = _state.value.copy(description = description)
-    }
-
-    fun updateStartTime(time: LocalDateTime) {
-        _state.value = _state.value.copy(startTime = time)
-    }
-
-    private fun createEventFromState(): ScheduleEvent {
-
-        return ScheduleEvent(
-            title = _state.value.title,
-            description = _state.value.description,
-            startTime = _state.value.startTime.toInstant(TimeZone.UTC),
-        )
-    }
-
-
-    fun addEvent() {
+    fun addEvent(event: ScheduleEvent) {
         viewModelScope.launch {
-            addEventUseCase(createEventFromState())
+            addEventUseCase(event)
         }
     }
+
+    val events: Flow<List<ScheduleEvent>> = observeEventsUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 }
 
-data class CreateEventState(
-    val title: String = "",
-    val description: String = "",
-    val startTime: LocalDateTime  = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-    val notificationOffset: Duration = 1.hours,
-    val selectedColor: Long = 0xFF6750A4,
-)
