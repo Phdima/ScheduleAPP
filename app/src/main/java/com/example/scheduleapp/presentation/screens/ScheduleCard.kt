@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.scheduleapp.presentation.viewModels.CreateEventState
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.scheduleapp.presentation.state.CreateEventState
+import com.example.scheduleapp.presentation.viewModels.ScheduleVM
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -53,11 +58,12 @@ fun ScheduleCard(
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onTimeChange: (LocalDateTime) -> Unit,
+    onAddEvent: () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     var showDateTimeDialog by remember { mutableStateOf(false) }
-
 
     Column(
         modifier = modifier
@@ -80,16 +86,25 @@ fun ScheduleCard(
             modifier = Modifier.fillMaxWidth(),
             maxLines = 3
         )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween)
+        {
+            Button(
+                onClick = { showDateTimeDialog = true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            ) {
+                Text(state.startTime.format())
+                Spacer(Modifier.width(8.dp))
+                Icon(Icons.Default.DateRange, null)
+            }
 
-        Button(
-            onClick = { showDateTimeDialog = true },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
-        ) {
-            Text(state.startTime.format())
-            Spacer(Modifier.width(8.dp))
-            Icon(Icons.Default.DateRange, null)
+            Button(onClick = {
+                onAddEvent()
+                onDismiss()
+            }) {
+                Text("Add Event")
+            }
         }
 
         if (showDateTimeDialog) {

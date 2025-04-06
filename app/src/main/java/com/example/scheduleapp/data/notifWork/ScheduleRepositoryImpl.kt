@@ -4,15 +4,19 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.example.scheduleapp.data.mapping.toDomain
 import com.example.scheduleapp.data.mapping.toEntity
 import com.example.scheduleapp.data.room.dao.ScheduleDao
+import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.days
 
 class ScheduleRepositoryImpl @Inject constructor(
     private val dao: ScheduleDao,
@@ -29,7 +33,11 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override fun observeUpcomingEvents(): Flow<List<ScheduleEvent>> {
-        TODO("Not yet implemented")
+
+        return dao.getEventsBetween(Clock.System.now(), Clock.System.now() + 7.days)
+            .map { entities ->
+                entities.map { it.toDomain() }
+            }
     }
 
     override suspend fun getEventsForNotification(timeRange: ClosedRange<Instant>): List<ScheduleEvent> {
