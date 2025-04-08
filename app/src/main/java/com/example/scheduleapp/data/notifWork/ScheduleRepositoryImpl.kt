@@ -34,9 +34,9 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     override fun observeUpcomingEvents(): Flow<List<ScheduleEvent>> {
 
-        return dao.getEventsBetween(Clock.System.now(), Clock.System.now() + 7.days)
+        return dao.getEventsBetween(Clock.System.now())
             .map { entities ->
-                entities.map { it.toDomain() }
+                entities.map { it.toDomain() }.sortedBy { it.startTime }
             }
     }
 

@@ -16,6 +16,6 @@ interface ScheduleDao {
     @Delete
     suspend fun delete(event: ScheduleEventEntity)
 
-    @Query("SELECT * FROM events WHERE start_time BETWEEN :start AND :end")
-    fun getEventsBetween(start: Instant, end: Instant): Flow<List<ScheduleEventEntity>>
+    @Query("SELECT * FROM events WHERE start_time >= :start")
+    fun getEventsBetween(start: Instant): Flow<List<ScheduleEventEntity>>
 }

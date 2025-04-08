@@ -1,9 +1,6 @@
 package com.example.scheduleapp.presentation.screens
 
 import android.annotation.SuppressLint
-import android.app.TimePickerDialog
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -36,24 +32,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.scheduleapp.data.mapping.format
 import com.example.scheduleapp.presentation.state.CreateEventState
-import com.example.scheduleapp.presentation.viewModels.ScheduleVM
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+
 
 
 @Composable
-fun ScheduleCard(
+fun ScheduleCardCreateView(
     state: CreateEventState,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
@@ -190,11 +182,7 @@ fun DateTimePickerDialog(
 }
 
 
-@SuppressLint("NewApi")
-fun LocalDateTime.format(): String {
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")
-    return this.toJavaLocalDateTime().format(formatter)
-}
+
 
 
 
