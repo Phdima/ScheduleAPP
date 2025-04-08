@@ -32,9 +32,22 @@ class ScheduleVM @Inject constructor(
     private val observeEventsUseCase: ObserveEventsUseCase
 ) : ViewModel() {
 
+    private val _error = MutableStateFlow<String?>(null)
+    val error : StateFlow<String?> = _error.asStateFlow()
+
+    fun clearError() {
+        _error.value = null
+    }
+
     fun addEvent(event: ScheduleEvent) {
         viewModelScope.launch {
-            addEventUseCase(event)
+            try {
+                addEventUseCase(event)
+                _error.value = null
+            } catch (e: IllegalArgumentException){
+                _error.value = e.message
+            }
+
         }
     }
 

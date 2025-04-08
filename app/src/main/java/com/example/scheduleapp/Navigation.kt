@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.scheduleapp.presentation.screens.MainScreen
-import com.example.scheduleapp.presentation.screens.ScheduleCard
 
 
 val LocalNavController = staticCompositionLocalOf<NavHostController> {
