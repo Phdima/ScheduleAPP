@@ -91,6 +91,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation (libs.kotlin.test)
+    testImplementation (libs.turbine)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

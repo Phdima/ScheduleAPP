@@ -7,7 +7,6 @@ import androidx.work.workDataOf
 import com.example.scheduleapp.data.mapping.toDomain
 import com.example.scheduleapp.data.mapping.toEntity
 import com.example.scheduleapp.data.room.dao.ScheduleDao
-import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,12 +15,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.days
 
 class ScheduleRepositoryImpl @Inject constructor(
     private val dao: ScheduleDao,
     private val workManager: WorkManager
 ) : ScheduleRepository {
+
     override suspend fun addEvent(event: ScheduleEvent) {
         val entity = event.toEntity()
         val id = dao.insert(entity)
