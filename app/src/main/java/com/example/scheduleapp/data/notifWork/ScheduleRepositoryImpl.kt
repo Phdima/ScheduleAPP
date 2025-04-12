@@ -7,6 +7,7 @@ import androidx.work.workDataOf
 import com.example.scheduleapp.data.mapping.toDomain
 import com.example.scheduleapp.data.mapping.toEntity
 import com.example.scheduleapp.data.room.dao.ScheduleDao
+import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
