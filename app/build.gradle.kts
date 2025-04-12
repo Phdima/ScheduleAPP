@@ -69,8 +69,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Hilt Work
-    implementation (libs.androidx.hilt.work)
-    kapt (libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
+    kapt(libs.androidx.hilt.compiler)
 
     // Room
     implementation(libs.androidx.room.runtime)
@@ -79,7 +79,7 @@ dependencies {
     kapt(libs.androidx.room.compiler)
 
     // WorkManager
-    implementation (libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
 
     // Kotlin
     implementation(libs.kotlinx.datetime)
@@ -90,8 +90,8 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.androidx.arch.core.testing)
-    testImplementation (libs.kotlin.test)
-    testImplementation (libs.turbine)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.turbine)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

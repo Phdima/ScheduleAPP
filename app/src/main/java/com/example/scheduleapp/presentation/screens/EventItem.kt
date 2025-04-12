@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.mapping.format
 import com.example.scheduleapp.domain.model.ScheduleEvent
@@ -31,8 +37,9 @@ fun EventItem(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
             .padding(8.dp)
+            .width(200.dp)
+            .height(200.dp)
             .clickable { onClick(event) },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
@@ -50,14 +57,18 @@ fun EventItem(
             if (event.description.isNotBlank()) {
                 Text(
                     text = event.description,
-                    style = MaterialTheme.typography.bodyMedium
+                    maxLines = 5,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.height(100.dp).fillMaxWidth().notebookLines(),
                 )
             } else {
                 Text(
                     text = "Ты Великолепен!",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.height(100.dp).fillMaxWidth().notebookLines(),
                 )
             }
+
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -71,13 +82,28 @@ fun EventItem(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-
-            Text(
-                text = "ID: ${event.id}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.outline
-            )
         }
     }
 }
+fun Modifier.notebookLines(
+    lineSpacing: Dp = 24.dp,
+    lineColor: Color = Color.LightGray.copy(alpha = 0.9f),
+    strokeWidth: Dp = 1.dp
+) = this.drawWithContent {
 
+    val lineHeightPx = lineSpacing.toPx()
+    var currentY = 0f
+
+    while (currentY <= size.height) {
+        drawLine(
+            color = lineColor,
+            start = Offset(0f, currentY),
+            end = Offset(size.width, currentY),
+            strokeWidth = strokeWidth.toPx()
+        )
+        currentY += lineHeightPx
+    }
+
+
+    drawContent()
+}
