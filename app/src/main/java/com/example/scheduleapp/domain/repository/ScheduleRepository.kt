@@ -7,7 +7,7 @@ import kotlinx.datetime.Instant
 
 interface ScheduleRepository{
     suspend fun addEvent(event: ScheduleEvent)
-    suspend fun deleteEvent(eventId: Long)
+    suspend fun deleteEvent(event: ScheduleEvent)
     fun observeUpcomingEvents(): Flow<List<ScheduleEvent>>
 
     suspend fun getEventsForNotification(timeRange: ClosedRange<Instant>): List<ScheduleEvent>

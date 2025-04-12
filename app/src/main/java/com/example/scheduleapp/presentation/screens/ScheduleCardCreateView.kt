@@ -82,9 +82,6 @@ fun ScheduleCardCreateView(
         {
             Button(
                 onClick = { showDateTimeDialog = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
             ) {
                 Text(state.startTime.format())
                 Spacer(Modifier.width(8.dp))

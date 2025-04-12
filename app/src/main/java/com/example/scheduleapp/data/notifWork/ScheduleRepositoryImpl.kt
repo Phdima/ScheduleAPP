@@ -28,8 +28,10 @@ class ScheduleRepositoryImpl @Inject constructor(
         scheduleNotification(event.copy(id = id))
     }
 
-    override suspend fun deleteEvent(eventId: Long) {
-        TODO("Not yet implemented")
+    override suspend fun deleteEvent(event: ScheduleEvent) {
+        val entity = event.toEntity()
+        dao.delete(entity)
+        workManager.cancelUniqueWork("event_${entity.id}")
     }
 
     override fun observeUpcomingEvents(): Flow<List<ScheduleEvent>> {
@@ -43,6 +45,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun getEventsForNotification(timeRange: ClosedRange<Instant>): List<ScheduleEvent> {
         TODO("Not yet implemented")
     }
+
 
     private fun scheduleNotification(event: ScheduleEvent) {
         val delay = event.startTime - Clock.System.now() - event.notificationOffset
