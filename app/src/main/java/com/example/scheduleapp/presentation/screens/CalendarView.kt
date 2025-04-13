@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.scheduleapp.data.mapping.format
@@ -147,15 +148,12 @@ fun CalendarView() {
 
                     items(daysInMonth) { dayIndex ->
                         val date = firstDayOfMonth.plus(dayIndex, DateTimeUnit.DAY)
-
-                        val hasEvent = events.any { event ->
-                            event.startTime.toLocalDate() == date
-                        }
+                        val dailyEvents = getEventsForDate(date)
 
                         DayCell(
                             day = date.dayOfMonth.toString(),
                             isToday = date == currentDate,
-                            hasEvent = hasEvent,
+                            events = dailyEvents,
                             onClick = { selectedDate = date }
                         )
 
@@ -240,7 +238,8 @@ fun DailyEventsCard(events: List<ScheduleEvent>, onDismiss: () -> Unit) {
 fun DayCell(
     day: String,
     isToday: Boolean,
-    hasEvent: Boolean,
+    events: List<ScheduleEvent>,
+    maxEventsToShow: Int = 3,
     onClick: () -> Unit
 ) {
 
@@ -257,14 +256,21 @@ fun DayCell(
             },
         contentAlignment = TopEnd
     ) {
-        if (hasEvent) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
-                    .align(Alignment.BottomStart)
-                    .padding(4.dp)
-            )
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            events.take(maxEventsToShow).forEach { event ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .background(color = Color(event.color))
+                )
+            }
+
         }
         Text(
             text = day,
