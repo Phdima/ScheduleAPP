@@ -1,14 +1,11 @@
 package com.example.scheduleapp.data.mapping
 
-import android.annotation.SuppressLint
 import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.time.Duration.Companion.milliseconds
 
 fun ScheduleEvent.toEntity(): ScheduleEventEntity {
@@ -18,6 +15,7 @@ fun ScheduleEvent.toEntity(): ScheduleEventEntity {
         description = this.description,
         startTime = this.startTime,
         notificationOffset = this.notificationOffset.inWholeMilliseconds,
+        notificationTime = (startTime - notificationOffset).toEpochMilliseconds(),
         color = this.color
     )
 }
@@ -40,6 +38,10 @@ fun Instant.format(): String {
             "${localDateTime.year}, " +
             "${localDateTime.hour.toString().padStart(2, '0')}:" +
             "${localDateTime.minute.toString().padStart(2, '0')}"
+}
+
+fun Instant.toLocalDateTime(): LocalDateTime {
+    return this.toLocalDateTime(TimeZone.currentSystemDefault())
 }
 
 fun LocalDateTime.format(): String {

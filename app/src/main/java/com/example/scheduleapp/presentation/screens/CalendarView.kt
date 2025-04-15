@@ -2,6 +2,8 @@ package com.example.scheduleapp.presentation.screens
 
 import android.annotation.SuppressLint
 import android.content.ClipData.Item
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,8 +12,10 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -19,9 +23,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,37 +70,21 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.number
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
-import java.time.Year
-import kotlin.time.Duration.Companion.days
 
 
 @SuppressLint("NewApi")
 @Composable
 fun CalendarView() {
 
-
     val viewModel: ScheduleVM = hiltViewModel()
     val events by viewModel.events.collectAsStateWithLifecycle(initialValue = emptyList())
-
-    val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val firstDayOfMonth = LocalDate(
-        year = currentDate.year,
-        month = currentDate.month,
-        dayOfMonth = 1
-    )
-    val daysInMonth = when (currentDate.month) {
-        Month.FEBRUARY -> 28
-        Month.APRIL, Month.JUNE, Month.SEPTEMBER, Month.NOVEMBER -> 30
-        else -> 31
-    }
-    val firstDayOfWeekNumber = firstDayOfMonth.dayOfWeek.isoDayNumber
-
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
 
@@ -102,81 +94,136 @@ fun CalendarView() {
         }
     }
 
-    LazyColumn(
-        modifier = Modifier.heightIn(max = 600.dp)
-    ) {
+    val lazyListState = rememberLazyListState()
+    val initialDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val monthsList = remember {
+        List(24) { index ->
+            initialDate.plus((index - 12), DateTimeUnit.MONTH)
+        }
+    }
 
-        item() {
-            Box(
-                modifier = Modifier
-                    .height(350.dp)
-                    .padding(8.dp)
-                    .shadow(
-                        elevation = 4.dp,
-                        shape = RoundedCornerShape(15.dp),
-                        clip = true
-                    )
-                    .clip(RoundedCornerShape(15.dp))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+    LaunchedEffect(initialDate) {
+        lazyListState.scrollToItem(12)
+    }
 
-            )
-            {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(7),
-                    modifier = Modifier.padding(8.dp)
+
+
+    Box(modifier = Modifier.fillMaxSize())
+    {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 600.dp)
+        ) {
+            item {
+                LazyRow(
+                    state = lazyListState,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-
-
-                    item(span = { GridItemSpan(7) }) {
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            DayOfWeek.values().forEach { day ->
-                                Text(
-                                    text = day.name,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(4.dp),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-                    }
-
-                    items((firstDayOfWeekNumber - 1) % 7) {
-                        Spacer(modifier = Modifier.size(50.dp))
-                    }
-
-                    items(daysInMonth) { dayIndex ->
-                        val date = firstDayOfMonth.plus(dayIndex, DateTimeUnit.DAY)
-                        val dailyEvents = getEventsForDate(date)
-
-                        DayCell(
-                            day = date.dayOfMonth.toString(),
-                            isToday = date == currentDate,
-                            events = dailyEvents,
-                            onClick = { selectedDate = date }
+                    items(monthsList) { monthDate ->
+                        MonthCalendar(
+                            year = monthDate.year,
+                            month = monthDate.month,
+                            events = events,
+                            onDateSelected = { selectedDate = it }
                         )
-
                     }
                 }
             }
-        }
-        item() {
-            selectedDate?.let { date ->
-                val dailyEvents = getEventsForDate(date)
-                if (dailyEvents.isNotEmpty()) {
-                    DailyEventsCard(
-                        events = dailyEvents,
-                        onDismiss = { selectedDate = null }
-                    )
+
+            item {
+                selectedDate?.let { date ->
+                    val dailyEvents = getEventsForDate(date)
+                    if (dailyEvents.isNotEmpty()) {
+                        DailyEventsCard(
+                            events = dailyEvents,
+                            onDismiss = { selectedDate = null }
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+@SuppressLint("NewApi")
 @Composable
-fun DailyEventsCard(events: List<ScheduleEvent>, onDismiss: () -> Unit) {
+fun MonthCalendar(
+    year: Int,
+    month: Month,
+    events: List<ScheduleEvent>,
+    onDateSelected: (LocalDate) -> Unit
+) {
+    val firstDayOfMonth = LocalDate(year, month, 1)
+    val daysInMonth = firstDayOfMonth.numberOfDaysInMonth()
+    val firstDayOfWeekNumber = firstDayOfMonth.dayOfWeek.isoDayNumber
+    val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    Box(
+        modifier = Modifier
+            .height(350.dp)
+            .padding(8.dp)
+            .shadow(4.dp, RoundedCornerShape(15.dp), clip = true)
+            .clip(RoundedCornerShape(15.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+            .width(350.dp)
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(7),
+            modifier = Modifier.padding(8.dp)
+        ) {
+            item(span = { GridItemSpan(7) }) {
+                Row(Modifier.fillMaxWidth()) {
+                    DayOfWeek.values().forEach { day ->
+                        Text(
+                            text = day.name.take(3),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp),
+                            style = MaterialTheme.typography.labelMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+
+            items((firstDayOfWeekNumber - 1) % 7) {
+                Spacer(Modifier.size(50.dp))
+            }
+
+            items(daysInMonth) { dayIndex ->
+                val date = firstDayOfMonth.plus(dayIndex, DateTimeUnit.DAY)
+                val dailyEvents = events.filter { event ->
+                    event.startTime
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date == date
+                }
+
+                DayCell(
+                    day = date.dayOfMonth.toString(),
+                    isToday = date == currentDate,
+                    events = dailyEvents,
+                    onClick = { onDateSelected(date) }
+                )
+            }
+        }
+        Text(
+            text = month.name + " " + year,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(15.dp)
+        )
+
+    }
+}
+
+
+@Composable
+fun DailyEventsCard(
+    events: List<ScheduleEvent>,
+    onDismiss: () -> Unit
+) {
     Card(
         modifier = Modifier
             .padding(5.dp)
@@ -280,7 +327,19 @@ fun DayCell(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+fun LocalDate.numberOfDaysInMonth(): Int {
+    return when (month) {
+        Month.FEBRUARY -> if (year.isLeapYear()) 29 else 28
+        Month.APRIL, Month.JUNE, Month.SEPTEMBER, Month.NOVEMBER -> 30
+        else -> 31
+    }
+}
+
+fun Int.isLeapYear(): Boolean {
+    return this % 4 == 0 && (this % 100 != 0 || this % 400 == 0)
+}
 
 fun Instant.toLocalDate(): LocalDate {
-    return this.toLocalDateTime(TimeZone.currentSystemDefault()).date
+    return this.toLocalDateTime(currentSystemDefault()).date
 }

@@ -82,6 +82,4 @@ class NotificationWorker @AssistedInject constructor(
             manager.createNotificationChannel(channel)
         }
     }
-
-
 }

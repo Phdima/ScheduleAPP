@@ -12,7 +12,7 @@ import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 
 @Database(
     entities = [ScheduleEventEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

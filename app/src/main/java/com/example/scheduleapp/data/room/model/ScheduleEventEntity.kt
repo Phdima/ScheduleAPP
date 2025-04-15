@@ -13,5 +13,6 @@ data class ScheduleEventEntity(
     val description: String,
     @ColumnInfo(name = "start_time") val startTime: Instant,
     @ColumnInfo(name = "notification_offset") val notificationOffset: Long,
+    @ColumnInfo(name = "notification_time") val notificationTime: Long,
     val color: Long
 )
