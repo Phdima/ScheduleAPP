@@ -37,7 +37,7 @@ class AddEventUseCaseTest {
         )
 
         assertFailsWith<IllegalArgumentException> {
-            useCase.invoke(pastEvent)
+            useCase(pastEvent)
         }
 
     }
@@ -53,7 +53,7 @@ class AddEventUseCaseTest {
         coEvery { repo.addEvent(futureEvent) } returns Unit
 
 
-        useCase.invoke(futureEvent)
+        useCase(futureEvent)
 
 
         coVerify(exactly = 1) { repo.addEvent(futureEvent) }

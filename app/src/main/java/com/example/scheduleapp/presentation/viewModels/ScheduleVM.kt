@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.useCases.AddEventUseCase
+import com.example.scheduleapp.domain.useCases.DeleteEventUseCase
 import com.example.scheduleapp.domain.useCases.ObserveEventsUseCase
 import com.example.scheduleapp.presentation.state.EventStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,11 +30,12 @@ import kotlin.time.Duration.Companion.hours
 @HiltViewModel
 class ScheduleVM @Inject constructor(
     private val addEventUseCase: AddEventUseCase,
+    private val deleteEventUseCase: DeleteEventUseCase,
     private val observeEventsUseCase: ObserveEventsUseCase
 ) : ViewModel() {
 
     private val _error = MutableStateFlow<String?>(null)
-    val error : StateFlow<String?> = _error.asStateFlow()
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     fun clearError() {
         _error.value = null
@@ -44,10 +46,19 @@ class ScheduleVM @Inject constructor(
             try {
                 addEventUseCase(event)
                 _error.value = null
-            } catch (e: IllegalArgumentException){
+            } catch (e: IllegalArgumentException) {
                 _error.value = e.message
             }
 
+        }
+    }
+
+    fun deleteEvent(event: ScheduleEvent) {
+        viewModelScope.launch {
+            try {
+                deleteEventUseCase(event)
+            } catch (e: IllegalArgumentException) {
+            }
         }
     }
 

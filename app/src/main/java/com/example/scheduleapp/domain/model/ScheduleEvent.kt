@@ -1,6 +1,7 @@
 package com.example.scheduleapp.domain.model
 
 import kotlinx.datetime.Instant
+import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
@@ -10,5 +11,11 @@ data class ScheduleEvent(
     val description: String,
     val startTime: Instant,
     val notificationOffset: Duration = 1.hours,
-    val color: Long = 0xFF6750A4
+    val color: Long = generateRandomColor()
 )
+
+
+fun generateRandomColor(): Long {
+    val rgb = Random.nextInt(0x1000000)
+    return 0xFF000000L or rgb.toLong()
+}

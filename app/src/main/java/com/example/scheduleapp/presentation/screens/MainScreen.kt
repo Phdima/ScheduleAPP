@@ -99,7 +99,8 @@ fun MainScreen() {
                             items(events) { event ->
                                 EventItem(
                                     event = event,
-                                    onClick = { /* Обработка клика */ }
+                                    onClick = { /* Обработка клика */ },
+                                    onDelete = { viewModel.deleteEvent(event) }
                                 )
                             }
                         }

@@ -40,6 +40,8 @@ class NotificationWorker @AssistedInject constructor(
         return Result.success()
     }
 
+
+
     private fun showNotification(event: ScheduleEvent) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -80,6 +82,4 @@ class NotificationWorker @AssistedInject constructor(
             manager.createNotificationChannel(channel)
         }
     }
-
-
 }
