@@ -21,10 +21,12 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.Duration
 
 class ScheduleRepositoryImpl @Inject constructor(
     private val dao: ScheduleDao,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
+    private val clockProvider: ClockProvider = SystemClockProvider()
 ) : ScheduleRepository {
 
     override suspend fun addEvent(event: ScheduleEvent) {
@@ -41,7 +43,7 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     override fun observeUpcomingEvents(): Flow<List<ScheduleEvent>> {
 
-        return dao.getEventsBetween(Clock.System.now())
+        return dao.getEventsBetween(Clock.System.now().toEpochMilliseconds())
             .map { entities ->
                 entities.map { it.toDomain() }.sortedBy { it.startTime }
             }
@@ -55,16 +57,18 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
 
-    private fun scheduleNotification(event: ScheduleEvent) {
+    internal fun scheduleNotification(event: ScheduleEvent) {
+
         val utcNotificationTime = event.startTime
-            .toLocalDateTime().toInstant(timeZone = TimeZone.currentSystemDefault())
             .minus(event.notificationOffset)
 
 
-        val delay = utcNotificationTime - Clock.System.now()
+        val delay = utcNotificationTime - clockProvider.currentTime()
+
+        val positiveDelay = maxOf(delay, Duration.ZERO)
 
         val workRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
-            .setInitialDelay(delay.inWholeMilliseconds, TimeUnit.MILLISECONDS)
+            .setInitialDelay(positiveDelay.inWholeMilliseconds, TimeUnit.MILLISECONDS)
             .setInputData(workDataOf("event_id" to event.id))
             .build()
 
@@ -74,4 +78,13 @@ class ScheduleRepositoryImpl @Inject constructor(
             workRequest
         )
     }
+}
+
+interface ClockProvider {
+    fun currentTime(): Instant
+}
+
+
+class SystemClockProvider : ClockProvider {
+    override fun currentTime() = Clock.System.now()
 }

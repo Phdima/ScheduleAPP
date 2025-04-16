@@ -19,6 +19,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packagingOptions {
+        exclude("META-INF/LICENSE.md")
+        exclude("META-INF/LICENSE-notice.md")
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/*.properties")
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -65,6 +72,11 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.transport.runtime)
+    implementation(libs.hilt.android.testing)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.runner)
+    implementation(libs.androidx.work.testing)
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
@@ -93,6 +105,8 @@ dependencies {
     testImplementation(libs.kotlin.test)
     testImplementation(libs.turbine)
 
+    androidTestImplementation (libs.mockk.android)  // Для Android-тестов
+    androidTestImplementation (libs.mockk.agent)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

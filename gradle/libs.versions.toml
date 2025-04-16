@@ -9,6 +9,8 @@ compose-compiler = "1.5.11"
 compose = "1.5.3"
 hilt = "2.50"
 kotlin-gradle-plugin = "1.9.10"
+mockk-agent = "1.13.8"
+mockk-android = "1.13.8"
 room = "2.6.1"
 lifecycle = "2.8.7"
 junit = "4.13.2"
@@ -16,6 +18,10 @@ mockk = "1.13.8"
 coroutines-test = "1.7.3"
 arch-testing = "2.2.0"
 turbine = "0.12.1"
+transport-runtime = "4.0.0"
+junit-ktx = "1.2.1"
+runner = "1.6.2"
+work-testing = "2.10.0"
 
 [libraries]
 # Core
@@ -69,7 +75,13 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.6.1" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk-agent" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk-android" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transport-runtime" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junit-ktx" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work-testing" }
 
 
 [plugins]

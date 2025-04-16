@@ -33,7 +33,7 @@ class EventStateHolder @Inject constructor() {
         return ScheduleEvent(
             title = currentState.title,
             description = currentState.description,
-            startTime = currentState.startTime.toInstant(TimeZone.UTC),
+            startTime = currentState.startTime.toInstant(TimeZone.currentSystemDefault()),
         )
     }
 }

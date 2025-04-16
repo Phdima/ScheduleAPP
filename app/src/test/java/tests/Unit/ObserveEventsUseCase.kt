@@ -1,12 +1,9 @@
-package tests
+package tests.Unit
 
 import app.cash.turbine.test
-import com.example.scheduleapp.data.room.dao.ScheduleDao
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
-import com.example.scheduleapp.domain.useCases.AddEventUseCase
 import com.example.scheduleapp.domain.useCases.ObserveEventsUseCase
-import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -16,7 +13,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
-import org.junit.Before
 import kotlin.test.Test
 
 

@@ -15,12 +15,14 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.scheduleapp.R
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @HiltWorker
 class NotificationWorker @AssistedInject constructor(
@@ -31,7 +33,7 @@ class NotificationWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val now = Clock.System.now()
-        val events = repository.getEventsForNotification(now..now.plus(1.hours))
+        val events = repository.getEventsForNotification(now.minus(5.minutes)..now.plus(1.hours))
 
         events.forEach { event ->
             showNotification(event)
@@ -50,11 +52,11 @@ class NotificationWorker @AssistedInject constructor(
         ) {
             return
         }
-        createNotificationChannel()
 
         val notification = NotificationCompat.Builder(context, "schedule_channel")
             .setContentTitle(event.title)
             .setContentText(event.description)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
@@ -63,23 +65,5 @@ class NotificationWorker @AssistedInject constructor(
 
         manager.notify(event.id.hashCode(), notification)
 
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "schedule_channel",
-                "Schedule Reminders",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Channel for schedule reminders"
-                enableVibration(true)
-                vibrationPattern = longArrayOf(100, 200, 100)
-            }
-
-            val manager = context.getSystemService(NotificationManager::class.java)
-
-            manager.createNotificationChannel(channel)
-        }
     }
 }

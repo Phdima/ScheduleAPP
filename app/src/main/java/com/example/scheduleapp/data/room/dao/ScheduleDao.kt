@@ -20,5 +20,5 @@ interface ScheduleDao {
     suspend fun getEventsForNotification(start: Long, end: Long): List<ScheduleEventEntity>
 
     @Query("SELECT * FROM events WHERE start_time >= :start")
-    fun getEventsBetween(start: Instant): Flow<List<ScheduleEventEntity>>
+    fun getEventsBetween(start: Long): Flow<List<ScheduleEventEntity>>
 }

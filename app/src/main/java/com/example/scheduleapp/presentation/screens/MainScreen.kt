@@ -2,6 +2,7 @@
 
 package com.example.scheduleapp.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.scheduleapp.data.mapping.format
 import com.example.scheduleapp.presentation.state.EventStateHolder
 import com.example.scheduleapp.presentation.viewModels.ScheduleVM
 import kotlinx.datetime.Clock
@@ -88,6 +90,7 @@ fun MainScreen() {
                     onAddEvent = {
                         val event = stateHolder.createEventFromState()
                         viewModel.addEvent(event)
+                        Log.d("TimeDebug", "startTime: ${event.startTime.format()}")
                     },
                     onDismiss = { showScheduleCard = !showScheduleCard },
                     modifier = Modifier.padding()
