@@ -1,4 +1,4 @@
-package tests
+package tests.Unit
 
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
@@ -7,7 +7,6 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.junit.Before

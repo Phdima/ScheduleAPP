@@ -1,4 +1,4 @@
-package tests
+package tests.Unit
 
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
@@ -8,12 +8,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
-import kotlin.time.Duration.Companion.days
 import org.junit.Test
 import kotlin.test.assertFailsWith
 import io.mockk.mockk
 import org.junit.Before
-import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 
 class AddEventUseCaseTest {
