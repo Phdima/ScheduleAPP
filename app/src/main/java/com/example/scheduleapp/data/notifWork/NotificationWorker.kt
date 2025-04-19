@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
@@ -32,38 +33,51 @@ class NotificationWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        val eventId = inputData.getLong("event_id", -1)
+        Log.d("Notification", "Event ID from input: $eventId")
+
+
+
         val now = Clock.System.now()
-        val events = repository.getEventsForNotification(now.minus(5.minutes)..now.plus(1.hours))
+        val events = repository.getEventsForNotification(now..now.plus(1.hours))
 
         events.forEach { event ->
             showNotification(event)
+            Log.d("Notification", "Processing event: ${event.id}, notificationTime = ${event.startTime - event.notificationOffset}")
         }
 
         return Result.success()
+
     }
 
 
 
     private fun showNotification(event: ScheduleEvent) {
 
+        Log.d("Notification", "Attempting to show notification for event: ${event.title}")
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED
         ) {
+            Log.e("Notification", "Permission denied!")
             return
         }
+
+        Log.d("Notification", "Permission granted or not required (API < 33)")
 
         val notification = NotificationCompat.Builder(context, "schedule_channel")
             .setContentTitle(event.title)
             .setContentText(event.description)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        manager.notify(event.id.hashCode(), notification)
-
+        val notificationId = System.currentTimeMillis().toInt()
+        manager.notify(notificationId, notification)
+        Log.d("Notification", "Showing notification for event: ${event.title}")
     }
 }
