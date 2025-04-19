@@ -1,5 +1,6 @@
 package tests.Unit
 
+import android.util.Log
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
@@ -14,7 +15,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.slot
+import io.mockk.unmockkAll
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,12 +48,15 @@ class ScheduleRepositoryTest {
 
     @Before
     fun setup() {
+        mockkStatic(Log::class)
+        every { Log.d(any(), any()) } returns 0
         Dispatchers.setMain(testDispatcher)
         every { mockClock.currentTime() } returns Instant.parse("2023-09-20T10:00:00Z")
     }
 
     @After
     fun tearDown() {
+        unmockkAll()
         Dispatchers.resetMain()
     }
 
@@ -111,7 +117,7 @@ class ScheduleRepositoryTest {
         every {
             mockWorkManager.enqueueUniqueWork(
                 eq("event_$eventId"),
-                eq(ExistingWorkPolicy.REPLACE),
+                eq(ExistingWorkPolicy.KEEP),
                 capture(workRequestSlot)
             )
         } returns mockk()

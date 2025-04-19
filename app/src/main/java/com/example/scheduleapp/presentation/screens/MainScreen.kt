@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.scheduleapp.data.mapping.format
+import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.presentation.state.EventStateHolder
 import com.example.scheduleapp.presentation.viewModels.ScheduleVM
 import kotlinx.datetime.Clock
@@ -42,6 +44,9 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 
 @Composable
@@ -121,6 +126,30 @@ fun MainScreen() {
 
                     item {
                         CalendarView()
+                    }
+                    item {
+                        Button(onClick = {
+                            val testEvent = ScheduleEvent(
+                                title = "2 часа ",
+                                description = "Test",
+                                startTime = Clock.System.now() + 2.hours,
+                            )
+                            viewModel.addEvent(testEvent)
+                        }) {
+                            Text("2 часа")
+                        }
+                    }
+                    item {
+                        Button(onClick = {
+                            val testEvent = ScheduleEvent(
+                                title = "1 час",
+                                description = "Test",
+                                startTime = Clock.System.now() + 1.hours,
+                            )
+                            viewModel.addEvent(testEvent)
+                        }) {
+                            Text("1 час")
+                        }
                     }
 
                 }

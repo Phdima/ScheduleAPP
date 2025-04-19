@@ -1,9 +1,12 @@
 package com.example.scheduleapp.data.notifWork
 
+import android.util.Log
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.example.scheduleapp.data.mapping.format
 
 import com.example.scheduleapp.data.mapping.toDomain
 import com.example.scheduleapp.data.mapping.toEntity
@@ -30,7 +33,10 @@ class ScheduleRepositoryImpl @Inject constructor(
 ) : ScheduleRepository {
 
     override suspend fun addEvent(event: ScheduleEvent) {
-        val entity = event.toEntity()
+        val notificationTime = event.startTime.minus(event.notificationOffset)
+        val entity = event.toEntity().copy(
+            notificationTime = notificationTime.toEpochMilliseconds()
+        )
         val id = dao.insert(entity)
         scheduleNotification(event.copy(id = id))
     }
@@ -50,33 +56,57 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getEventsForNotification(timeRange: ClosedRange<Instant>): List<ScheduleEvent> {
-        return dao.getEventsForNotification(
+        Log.d("Notification", "Fetching events for range: ${timeRange.start.format()} ${timeRange.endInclusive.format()}")
+        val events = dao.getEventsForNotification(
             start = timeRange.start.toEpochMilliseconds(),
             end = timeRange.endInclusive.toEpochMilliseconds()
         ).map { it.toDomain() }
+        Log.d("Notification", "Found events: ${events.size}")
+        return events
+
     }
+
+
 
 
     internal fun scheduleNotification(event: ScheduleEvent) {
 
+
+        Log.d("WorkManager", "Scheduling event: ${event.id}, delay: 0 seconds")
         val utcNotificationTime = event.startTime
             .minus(event.notificationOffset)
 
 
+
         val delay = utcNotificationTime - clockProvider.currentTime()
+
+        if (delay.isNegative()) {
+            Log.e("WorkManager", "Notification time is in the past for event ${event.id}")
+            return
+        }
 
         val positiveDelay = maxOf(delay, Duration.ZERO)
 
         val workRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
             .setInitialDelay(positiveDelay.inWholeMilliseconds, TimeUnit.MILLISECONDS)
-            .setInputData(workDataOf("event_id" to event.id))
+            .setInputData(workDataOf("event_id" to  event.id))
             .build()
 
         workManager.enqueueUniqueWork(
             "event_${event.id}",
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+
+        Log.d("WorkManager", "WorkRequest data: ${workRequest.id}")
+        Log.d("WorkManager", "Scheduling event with ID: ${event.id}")
+
+        // В scheduleNotification():
+        Log.d("WorkManager", "Event ${event.id}: notificationTime = ${event.startTime - event.notificationOffset}, delay = $delay")
+
+
+
     }
 }
 
