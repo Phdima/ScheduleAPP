@@ -1,4 +1,4 @@
-package com.example.scheduleapp
+package com.example.scheduleapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf

@@ -1,9 +1,8 @@
-package com.example.scheduleapp
+package com.example.scheduleapp.presentation.activties
 
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,8 +12,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import com.example.scheduleapp.presentation.navigation.AppNavHost
+import com.example.scheduleapp.presentation.navigation.LocalNavController
 import com.example.scheduleapp.ui.theme.ScheduleAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 

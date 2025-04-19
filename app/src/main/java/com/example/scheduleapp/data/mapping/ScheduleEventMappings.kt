@@ -15,7 +15,8 @@ fun ScheduleEvent.toEntity(): ScheduleEventEntity {
         description = this.description,
         startTime = this.startTime,
         notificationOffset = this.notificationOffset.inWholeMilliseconds,
-        notificationTime = (startTime - notificationOffset).toEpochMilliseconds(),
+        notificationTime = (startTime).toEpochMilliseconds(),
+        isNotificated = this.isNotificated,
         color = this.color
     )
 }
@@ -27,6 +28,7 @@ fun ScheduleEventEntity.toDomain(): ScheduleEvent {
         description = this.description,
         startTime = this.startTime,
         notificationOffset = notificationOffset.milliseconds,
+        isNotificated = this.isNotificated,
         color = this.color
     )
 }

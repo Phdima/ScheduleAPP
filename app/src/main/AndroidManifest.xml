@@ -17,7 +17,7 @@
         android:theme="@style/Theme.ScheduleApp"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.activties.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen">
