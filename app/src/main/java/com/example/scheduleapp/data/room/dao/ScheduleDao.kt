@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.example.scheduleapp.data.room.model.ScheduleEventEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
@@ -15,6 +16,9 @@ interface ScheduleDao {
 
     @Delete
     suspend fun delete(event: ScheduleEventEntity)
+
+    @Update
+    suspend fun update(event: ScheduleEventEntity)
 
     @Query("SELECT * FROM events WHERE notification_time BETWEEN :start AND :end")
     suspend fun getEventsForNotification(start: Long, end: Long): List<ScheduleEventEntity>

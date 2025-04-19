@@ -118,8 +118,7 @@ fun CalendarView() {
             item {
                 LazyRow(
                     state = lazyListState,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp)
+
                 ) {
                     items(monthsList) { monthDate ->
                         MonthCalendar(

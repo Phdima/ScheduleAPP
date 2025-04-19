@@ -17,6 +17,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.scheduleapp.R
+import com.example.scheduleapp.data.mapping.format
 import com.example.scheduleapp.domain.model.ScheduleEvent
 import com.example.scheduleapp.domain.repository.ScheduleRepository
 import dagger.assisted.Assisted
@@ -33,23 +34,22 @@ class NotificationWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val eventId = inputData.getLong("event_id", -1)
-        Log.d("Notification", "Event ID from input: $eventId")
-
 
 
         val now = Clock.System.now()
         val events = repository.getEventsForNotification(now..now.plus(1.hours))
 
+
         events.forEach { event ->
-            showNotification(event)
-            Log.d("Notification", "Processing event: ${event.id}, notificationTime = ${event.startTime - event.notificationOffset}")
+            if (!event.isNotificated) {
+                showNotification(event)
+                repository.markNotificationShow(event)
+            }
         }
 
         return Result.success()
 
     }
-
 
 
     private fun showNotification(event: ScheduleEvent) {
@@ -76,7 +76,7 @@ class NotificationWorker @AssistedInject constructor(
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val notificationId = System.currentTimeMillis().toInt()
+        val notificationId = event.id.hashCode()
         manager.notify(notificationId, notification)
         Log.d("Notification", "Showing notification for event: ${event.title}")
     }

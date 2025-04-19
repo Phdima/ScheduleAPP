@@ -11,6 +11,7 @@ data class ScheduleEvent(
     val description: String,
     val startTime: Instant,
     val notificationOffset: Duration = 1.hours,
+    var isNotificated: Boolean = false,
     val color: Long = generateRandomColor()
 )
 
