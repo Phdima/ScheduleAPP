@@ -42,8 +42,7 @@ graph LR
     VM -->|Сохранить событие| Repo[Репозиторий]
     Repo -->|Запись в БД| DB[(Room Database)]
     Repo -->|Планирование| WM[WorkManager]
-    WM -->|Триггер по времени| Notify[NotificationService]
-    Notify -->|Показывает уведомление| User
+    WM -->|запуск уведомления по времени| User[Пользователь]
     DB -->|Обновление данных| Repo
     Repo -->|Поток событий| VM
     VM -->|Обновление списка| UI
