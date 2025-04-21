@@ -1,11 +1,12 @@
-ScheduleAPP 📅🔔
+# ScheduleAPP 📅🔔
+
 Android-приложение для создания событий в календаре с интеллектуальными уведомлениями.
 Управление напоминаниями и моментальный доступ к предстоящим активностям.
 
-Kotlin
-Jetpack Compose
-WorkManager
-Clean Architecture
+[![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-4285F4?style=for-the-badge&logo=jetpack-compose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![WorkManager](https://img.shields.io/badge/WorkManager-5C6BC0?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/topic/libraries/architecture/workmanager)
+[![Clean Architecture](https://img.shields.io/badge/Clean_Architecture-6DB33F?style=for-the-badge)](https://developer.android.com/topic/architecture)
 
 🌟 Ключевые возможности
 Создание/редактирование событий с датой и временем
